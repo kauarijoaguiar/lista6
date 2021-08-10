@@ -364,13 +364,26 @@ VALUES
         12,
         'pele@cbf.com.br',
         'SHOW!',
-        'c',
-        'd',
-        'Cuba',
+        'Rio de Janeiro',
+        'RJ',
+        'Brasil',
         '2021-06-02 15:00:00',
         10,
         1,
         2,
+        null
+    ),
+    (
+        13,
+        'pele@cbf.com.br',
+        'Brasil: 20 medalhas nas Olimpíadas 2020/2021 em Tóquio',
+        'Rio de Janeiro',
+        'RJ',
+        'Brasil',
+        '2021-08-05 15:00:00',
+        null,
+        0, 
+        0, 
         null
     );
 
@@ -476,3 +489,20 @@ INSERT INTO COMPARTILHAMENTO(
     'RS', 
     '2021-06-10 13:00:00'
 );
+
+
+--A)
+UPDATE POST
+SET POST = 'Brasil: 21 medalhas nas Olimpíadas 2020/2021 em Tóquio'
+WHERE EMAIL_USUARIO='pele@cbf.com.br'
+AND POST LIKE '%Brasil: 20 medalhas nas Olimpíadas 2020/2021 em Tóquio%'
+AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE EMAIL_USUARIO='pele@cbf.com.br');
+
+--B)
+
+
+--C)
+
+--D)
+
+--E)
