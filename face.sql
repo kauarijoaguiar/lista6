@@ -112,6 +112,7 @@ CREATE TABLE POST(
     QTDCOMENTARIOS INTEGER NOT NULL DEFAULT 0,
     QTDREACOES INTEGER NOT NULL DEFAULT 0,
 CODIGOGRUPO INTEGER,
+CLASSIFICACAO CHAR (100),
     FOREIGN KEY (EMAIL_USUARIO) REFERENCES USUARIO(EMAIL),
     FOREIGN KEY (CODPOSTREFERENCIA) REFERENCES POST(CODIGO),
     FOREIGN KEY (CODIGOGRUPO) REFERENCES GRUPO(CODIGO),
@@ -131,6 +132,10 @@ CODIGOGRUPO INTEGER,
     (
         2,
         'Banco de Dados-IFRS-2021'
+    ),
+    (
+        3,
+        'IFRS-Campus Rio Grande'
     )
     ;
 
@@ -227,7 +232,8 @@ INSERT INTO
         CODPOSTREFERENCIA,
         QTDREACOES,
         QTDCOMENTARIOS,
-        CODIGOGRUPO
+        CODIGOGRUPO,
+        CLASSIFICACAO
     )
 VALUES
     (
@@ -241,6 +247,7 @@ VALUES
         null,
         1,
         2,
+        null,
         null
     ),
     (
@@ -254,7 +261,8 @@ VALUES
         1,
         1,
         0,
-        1
+        1,
+        null
     ),
     (
         4,
@@ -267,6 +275,7 @@ VALUES
         3,
         0,
         0,
+        null,
         null
     ),
     (
@@ -280,6 +289,7 @@ VALUES
         4,
         0,
         0,
+        null,
         null
     ),
     (
@@ -293,7 +303,8 @@ VALUES
         null,
         0,
         0,
-        2
+        2,
+        null
     ),
     (
         7,
@@ -306,7 +317,8 @@ VALUES
         6,
         0,
         0,
-        2
+        2,
+        null
     ),
      (
         8,
@@ -319,6 +331,7 @@ VALUES
         null,
         1,
         2,
+        null,
         null
     ),
      (
@@ -332,6 +345,7 @@ VALUES
         null,
         1,
         2,
+        null, 
         null
     ),
      (
@@ -345,6 +359,7 @@ VALUES
         null,
         1,
         2,
+        null,
         null
     ),
      (
@@ -358,6 +373,7 @@ VALUES
         null,
         1,
         2,
+        null,
         null
     ),
      (
@@ -371,6 +387,7 @@ VALUES
         10,
         1,
         2,
+        null,
         null
     ),
     (
@@ -384,6 +401,7 @@ VALUES
         null,
         0, 
         0, 
+        null,
         null
     );
 
@@ -502,18 +520,18 @@ AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE EMAIL_USUARIO='pele@cbf.com
 UPDATE REACAO
 SET TIPOREACAO = 'AMEI'
 FROM GRUPO
-WHERE GRUPO.CODIGO = 1 AND EMAIL_USUARIO='pxramos@mymail.com'
+WHERE GRUPO.NOMEGRUPO = 'SQLite' AND EMAIL_USUARIO='pxramos@mymail.com'
 AND TIPOREACAO LIKE '%CURTIDA%'
 
 --C)
 
 
+
 --D)
-DELETE POST 
+DELETE 
 FROM POST
-WHERE GRUPO.NOMEGRUPO = 'IFRS-Campus Rio Grande' 
-AND GRUPO.CLASSIFICACAO = 'ODIO'
-AND AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE GRUPO.NOMEGRUPO ='IFRS-Campus Rio Grande');
---fiz a D mas n testei 
+WHERE POST.CODIGOGRUPO = 3 
+AND POST.CLASSIFICACAO = 'ODIO'
+AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE POST.CODIGOGRUPO = 3);
 
 --E)
