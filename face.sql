@@ -251,6 +251,20 @@ VALUES
         null
     ),
     (
+        2,
+        'joaosbras@mymail.com',
+        'Hoje eu aprendi como inserir dados no SQLite no IFRS',
+        'Rio Grande',
+        'RS',
+        'Brasil',
+        '2021-07-15 15:00:00',
+        null,
+        1,
+        2,
+        3,
+        'odio'
+    ),
+    (
         3,
         'jorosamed@mymail.com',
         'Alguém mais ficou com dúvida no comando INSERT?',
@@ -455,7 +469,7 @@ values
     ),
     (
         3,
-        'Triste',
+        'Curtida',
         'pxramos@mymail.com',
         'Rio Grande',
         'RS',
@@ -518,20 +532,30 @@ AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE EMAIL_USUARIO='pele@cbf.com
 
 --B)
 UPDATE REACAO
-SET TIPOREACAO = 'AMEI'
-FROM GRUPO
-WHERE GRUPO.NOMEGRUPO = 'SQLite' AND EMAIL_USUARIO='pxramos@mymail.com'
-AND TIPOREACAO LIKE '%CURTIDA%'
+SET TIPOREACAO = 'Amei'
+FROM GRUPO, POST
+WHERE POST.EMAIL_USUARIO = 'pxramos@mymail.com'
+AND UPPER(GRUPO.NOMEGRUPO) = 'SQLITE'
+AND TIPOREACAO LIKE '%Curtida%'
+AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE EMAIL_USUARIO='pxramos@mymail.com');
 
 --C)
+UPDATE USUARIO
+SET ATIVO = false 
+FROM USUARIO, POST, REACAO, COMPARTILHAMENTO
+WHERE 
+
+AND ATIVO = '%True%'
+--FAZENDO 
+
 
 
 
 --D)
 DELETE 
 FROM POST
-WHERE POST.CODIGOGRUPO = 3 
-AND POST.CLASSIFICACAO = 'ODIO'
-AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE POST.CODIGOGRUPO = 3);
+WHERE UPPER(POST.CLASSIFICACAO) = 'ODIO'
+AND CODIGOGRUPO = (SELECT CODIGO FROM GRUPO WHERE NOMEGRUPO = 'IFRS-Campus Rio Grande')
+AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE CODIGOGRUPO = 3);
 
 --E)
