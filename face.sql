@@ -26,8 +26,9 @@ CREATE TABLE USUARIO(
     CIDADE CHAR(100),
     PAIS CHAR(100),
     UF CHAR(100),
-    GENERO char (1),
+    GENERO CHAR (1),
     NASCIMENTO date,
+    ATIVO BOOLEAN,
     PRIMARY KEY (EMAIL)
 );
 
@@ -148,7 +149,8 @@ INSERT INTO
         PAIS,
         UF,
         GENERO,
-        NASCIMENTO
+        NASCIMENTO,
+        ATIVO
     )
 VALUES
     (
@@ -159,7 +161,8 @@ VALUES
         'Brasil',
         'RS',
         'M',
-        '1998-02-02'
+        '1998-02-02',
+        True
     ),
     (
         'pmartinssilva90@mymail.com',
@@ -169,7 +172,8 @@ VALUES
         null,
         null,
         'M',
-        '2003-05-23'
+        '2003-05-23',
+        True
     ),
     (
         'mcalbuq@mymail.com',
@@ -179,7 +183,8 @@ VALUES
         'Brasil',
         'RS',
         'F',
-        '2002-11-04'
+        '2002-11-04',
+        True
     ),
     (
         'jorosamed@mymail.com',
@@ -189,7 +194,8 @@ VALUES
         'Brasil',
         'RS',
         'N',
-        '1974-02-05'
+        '1974-02-05',
+        True
     ),
     (
         'pxramos@mymail.com',
@@ -199,7 +205,8 @@ VALUES
         'Brasil',
         'RS',
         'N',
-        '1966-03-30'
+        '1966-03-30',
+        True
     ),
     (
         'pele@cbf.com.br',
@@ -209,7 +216,8 @@ VALUES
         'Brasil',
         'MG',
         'M',
-        '1940-10-23'
+        '1940-10-23',
+        True
     );
 
 INSERT INTO
@@ -243,7 +251,7 @@ VALUES
         'Rio Grande',
         'RS',
         'Brasil',
-        '2021-06-02 15:00:00',
+        '2015-06-02 15:00:00',
         null,
         1,
         2,
@@ -459,7 +467,7 @@ INSERT INTO
 values
     (
         2,
-        'Curtida',
+        'Amei',
         'mcalbuq@mymail.com',
         'Rio Grande',
         'RS',
@@ -477,8 +485,18 @@ values
         3,
         '2021-06-02 15:20:00'
     ),
-    (
+        (
         4,
+        'Curtida',
+        'pxramos@mymail.com',
+        'Rio Grande',
+        'RS',
+        'Brasil',
+        3,
+        '2021-06-03 15:21:00'
+    ),
+    (
+        5,
         'Triste',
         'joaosbras@mymail.com',
         'Rio Grande',
@@ -531,25 +549,38 @@ AND POST LIKE '%Brasil: 20 medalhas nas Olimpíadas 2020/2021 em Tóquio%'
 AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE EMAIL_USUARIO='pele@cbf.com.br');
 
 --B)
-UPDATE REACAO
-SET TIPOREACAO = 'Amei'
-FROM GRUPO, POST
-WHERE POST.EMAIL_USUARIO = 'pxramos@mymail.com'
-AND UPPER(GRUPO.NOMEGRUPO) = 'SQLITE'
-AND TIPOREACAO LIKE '%Curtida%'
-AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE EMAIL_USUARIO='pxramos@mymail.com');
 
+UPDATE REACAO
+SET TIPOREACAO = 'amei'
+FROM USUARIO, GRUPO, POST
+WHERE
+USUARIO.EMAIL = REACAO.EMAIL_USUARIO
+AND 
+UPPER(GRUPO.NOMEGRUPO) = 'SQLITE'
+AND
+USUARIO.EMAIL = 'pxramos@mymail.com'
+AND 
+TIPOREACAO LIKE '%curtida%'
+AND 
+DATAREACAO = (SELECT MAX(DATAREACAO) FROM REACAO WHERE EMAIL_USUARIO='pxramos@mymail.com');
+--NÃO TA PEGANDO O GRUPO
 --C)
 UPDATE USUARIO
-SET ATIVO = false 
-FROM USUARIO, POST, REACAO, COMPARTILHAMENTO
+SET ATIVO = False
+FROM  POST, COMPARTILHAMENTO, REACAO
 WHERE 
-
-AND ATIVO = '%True%'
---FAZENDO 
-
-
-
+USUARIO.EMAIL = POST.EMAIL_USUARIO 
+OR
+USUARIO.EMAIL = COMPARTILHAMENTO.EMAIL_USUARIO
+OR
+USUARIO.EMAIL = REACAO.EMAIL_USUARIO
+AND
+POST.DATAPOST <= DATE('now', '-5 years')
+AND 
+COMPARTILHAMENTO.DATACOMPARTILHAMENTO <= DATE('now', '-5 years')
+AND 
+REACAO.DATAREACAO <= DATE('now', '-5 years');
+--TA mostrando o contrario 
 
 --D)
 DELETE 
@@ -559,3 +590,5 @@ AND CODIGOGRUPO = (SELECT CODIGO FROM GRUPO WHERE NOMEGRUPO = 'IFRS-Campus Rio G
 AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE CODIGOGRUPO = 3);
 
 --E)
+
+
