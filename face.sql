@@ -582,15 +582,16 @@ AND
 REACAO.DATAREACAO <= DATE('now', '-5 years');
 --TA mostrando o contrario 
 
---D)
+--D) REVISADA
 DELETE 
 FROM POST
 WHERE UPPER(POST.CLASSIFICACAO) = 'ODIO'
 AND CODIGOGRUPO = (SELECT CODIGO FROM GRUPO WHERE NOMEGRUPO = 'IFRS-Campus Rio Grande')
-AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE CODIGOGRUPO = 3);
+AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST, GRUPO WHERE POST.CODIGOGRUPO=GRUPO.CODIGO AND GRUPO.NOMEGRUPO='IFRS-Campus Rio Grande');
 
 --E)
 
+-- 2)
 
 -- 3) Através do controle de concorrência é possível haver segurança de que a compra
 -- lugares numerados em um show será feito por uma única pessoa. O método armazena a informação
