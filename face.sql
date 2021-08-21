@@ -218,6 +218,17 @@ VALUES
         'M',
         '1940-10-23',
         True
+    ),
+    (
+        'alice@mail.com.br',
+        'Alice Da Cunha',
+        null,
+        'Três Corações',
+        'Brasil',
+        'MG',
+        'F',
+        '2001-07-04',
+        True
     );
 
 INSERT INTO
@@ -541,29 +552,33 @@ INSERT INTO COMPARTILHAMENTO(
 );
 
 
---A)
+--A) //REVISADA
 UPDATE POST
 SET POST = 'Brasil: 21 medalhas nas Olimpíadas 2020/2021 em Tóquio'
 WHERE EMAIL_USUARIO='pele@cbf.com.br'
 AND POST LIKE '%Brasil: 20 medalhas nas Olimpíadas 2020/2021 em Tóquio%'
 AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE EMAIL_USUARIO='pele@cbf.com.br');
 
---B)
+--B) // REVISADA
 
 UPDATE REACAO
-SET TIPOREACAO = 'amei'
-FROM USUARIO, GRUPO, POST
+SET TIPOREACAO = 'AMEI'
+FROM GRUPO, POST
 WHERE
-USUARIO.EMAIL = REACAO.EMAIL_USUARIO
+REACAO.COD_POST = POST.CODIGO AND
+POST.CODIGOGRUPO=GRUPO.CODIGO
 AND 
 UPPER(GRUPO.NOMEGRUPO) = 'SQLITE'
 AND
-USUARIO.EMAIL = 'pxramos@mymail.com'
+REACAO.EMAIL_USUARIO = 'pxramos@mymail.com'
 AND 
-TIPOREACAO LIKE '%curtida%'
+UPPER(TIPOREACAO) = 'CURTIDA'
 AND 
-DATAREACAO = (SELECT MAX(DATAREACAO) FROM REACAO WHERE EMAIL_USUARIO='pxramos@mymail.com');
---NÃO TA PEGANDO O GRUPO
+DATAREACAO = (SELECT MAX(DATAREACAO) FROM REACAO INNER JOIN POST ON REACAO.COD_POST = POST.CODIGO
+INNER JOIN GRUPO ON POST.CODIGOGRUPO = GRUPO.CODIGO
+WHERE GRUPO.NOMEGRUPO LIKE '%SQLite%' 
+AND REACAO.EMAIL_USUARIO='pxramos@mymail.com');
+
 --C)
 UPDATE USUARIO
 SET ATIVO = False
@@ -580,6 +595,8 @@ AND
 COMPARTILHAMENTO.DATACOMPARTILHAMENTO <= DATE('now', '-5 years')
 AND 
 REACAO.DATAREACAO <= DATE('now', '-5 years');
+
+
 --TA mostrando o contrario 
 
 --D) REVISADA
