@@ -592,3 +592,12 @@ AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE CODIGOGRUPO = 3);
 --E)
 
 
+-- 3) Através do controle de concorrência é possível haver segurança de que a compra
+-- lugares numerados em um show será feito por uma única pessoa. O método armazena a informação
+-- em formato datetime do momento da prospecção de um lugar, de forma a comparar o exato momento
+-- de acesso com a data da última modificação armazenada no banco de dados, de forma que o primeiro
+-- usuário à acessar a página para compra, ao clicar no botão de compra, terá seu lugar reservado pois
+-- a data da última modificação retirada do banco de dados e armazenada em uma variável no fonte é exata
+-- mente o mesmo do registro no banco de dados, diferente do usuário que acessar a página um segundo depois,
+-- que no momento de procurar o registro na tabela para reservar o lugar não será encontrado, pois a data já foi
+-- alterada para o exato instante do usuário que efetivou a compra primeiro.
