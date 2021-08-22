@@ -551,6 +551,16 @@ INSERT INTO COMPARTILHAMENTO(
     '2021-06-10 13:00:00'
 );
 
+CREATE TABLE SELO(
+    EMAIL_USUARIO CHAR (100) NOT NULL,
+    CODIGOGRUPO INTEGER NOT NULL,
+    DATAINICIO DATETIME NOT NULL,
+    DATAFINAL DATETIME NOT NULL,
+    TIPOSELO CHAR(20) NOT NULL,
+    FOREIGN KEY (EMAIL_USUARIO) REFERENCES USUARIO(EMAIL),
+    FOREIGN KEY (CODIGOGRUPO) REFERENCES GRUPO(CODIGO),
+    PRIMARY KEY (EMAIL_USUARIO, CODIGOGRUPO, DATAINICIO)
+);
 
 --A) 
 UPDATE POST
@@ -602,8 +612,14 @@ AND CODIGOGRUPO = (SELECT CODIGO FROM GRUPO WHERE NOMEGRUPO = 'IFRS-Campus Rio G
 AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST, GRUPO WHERE POST.CODIGOGRUPO=GRUPO.CODIGO AND GRUPO.NOMEGRUPO='IFRS-Campus Rio Grande');
 
 --E)
+WITH NROCOMENTARIOSGRUPO AS (SELECT COUNT(*) FROM POST ) //TO FAZENDO
 
--- 2)
+
+-- 2) Foi necessário adicionar um status ativo na tabela de usuários para que fosse possível a inativação
+-- temporária de um usuário por ausência de atividades.
+-- Foi necessário adicionar uma classificação aos posts para que possa haver a exclusãp de posts através de sua classificação.
+-- Foi necessária a criação de uma tabela de selos para atribuir selos de fãs para usuários de grupos na rede social.
+-- Foram adicionados dados para melhor teste dos comandos.
 
 -- 3) Através do controle de concorrência é possível haver segurança de que a compra
 -- lugares numerados em um show será feito por uma única pessoa. O método armazena a informação
