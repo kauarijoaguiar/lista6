@@ -162,7 +162,7 @@ VALUES
         'RS',
         'M',
         '1998-02-02',
-        True
+        true
     ),
     (
         'pmartinssilva90@mymail.com',
@@ -173,7 +173,7 @@ VALUES
         null,
         'M',
         '2003-05-23',
-        True
+        true
     ),
     (
         'mcalbuq@mymail.com',
@@ -184,7 +184,7 @@ VALUES
         'RS',
         'F',
         '2002-11-04',
-        True
+        true
     ),
     (
         'jorosamed@mymail.com',
@@ -195,7 +195,7 @@ VALUES
         'RS',
         'N',
         '1974-02-05',
-        True
+        true
     ),
     (
         'pxramos@mymail.com',
@@ -206,7 +206,7 @@ VALUES
         'RS',
         'N',
         '1966-03-30',
-        True
+        true
     ),
     (
         'pele@cbf.com.br',
@@ -217,7 +217,7 @@ VALUES
         'MG',
         'M',
         '1940-10-23',
-        True
+        true
     ),
     (
         'alice@mail.com.br',
@@ -228,7 +228,7 @@ VALUES
         'MG',
         'F',
         '2001-07-04',
-        True
+        true
     );
 
 INSERT INTO
@@ -552,14 +552,14 @@ INSERT INTO COMPARTILHAMENTO(
 );
 
 
---A) //REVISADA
+--A) 
 UPDATE POST
 SET POST = 'Brasil: 21 medalhas nas Olimpíadas 2020/2021 em Tóquio'
 WHERE EMAIL_USUARIO='pele@cbf.com.br'
 AND POST LIKE '%Brasil: 20 medalhas nas Olimpíadas 2020/2021 em Tóquio%'
 AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST WHERE EMAIL_USUARIO='pele@cbf.com.br');
 
---B) // REVISADA
+--B)
 
 UPDATE REACAO
 SET TIPOREACAO = 'AMEI'
@@ -581,25 +581,20 @@ AND REACAO.EMAIL_USUARIO='pxramos@mymail.com');
 
 --C)
 UPDATE USUARIO
-SET ATIVO = False
-FROM  POST, COMPARTILHAMENTO, REACAO
+SET ATIVO = false
+FROM (SELECT CASE WHEN MAX(DATAPOST) IS NULL THEN DATETIME('1900-01-01') ELSE MAX(DATAPOST) END AS DATAMAXIMA, EMAIL FROM USUARIO LEFT JOIN POST ON POST.EMAIL_USUARIO = USUARIO.EMAIL GROUP BY EMAIL) AS POST, 
+(SELECT CASE WHEN MAX(DATACOMPARTILHAMENTO) IS NULL THEN DATETIME('1900-01-01') ELSE MAX(DATACOMPARTILHAMENTO) END AS DATAMAXIMA, EMAIL FROM USUARIO LEFT JOIN COMPARTILHAMENTO ON COMPARTILHAMENTO.EMAIL_USUARIO = USUARIO.EMAIL GROUP BY EMAIL) AS COMPARTILHAMENTO,
+(SELECT CASE WHEN MAX(DATAREACAO) IS NULL THEN DATETIME('1900-01-01') ELSE MAX(DATAREACAO) END AS DATAMAXIMA, EMAIL FROM USUARIO LEFT JOIN REACAO ON REACAO.EMAIL_USUARIO = USUARIO.EMAIL GROUP BY EMAIL) AS REACAO
 WHERE 
-USUARIO.EMAIL = POST.EMAIL_USUARIO 
-OR
-USUARIO.EMAIL = COMPARTILHAMENTO.EMAIL_USUARIO
-OR
-USUARIO.EMAIL = REACAO.EMAIL_USUARIO
-AND
-POST.DATAPOST <= DATE('now', '-5 years')
+(USUARIO.EMAIL = POST.EMAIL AND POST.DATAMAXIMA < DATE('now', '-5 years'))
 AND 
-COMPARTILHAMENTO.DATACOMPARTILHAMENTO <= DATE('now', '-5 years')
+(USUARIO.EMAIL = COMPARTILHAMENTO.EMAIL AND COMPARTILHAMENTO.DATAMAXIMA < DATE('now', '-5 years'))
 AND 
-REACAO.DATAREACAO <= DATE('now', '-5 years');
+(USUARIO.EMAIL = REACAO.EMAIL AND REACAO.DATAMAXIMA < DATE('now', '-5 years'))
+AND USUARIO.PAIS='Brasil';
 
 
---TA mostrando o contrario 
-
---D) REVISADA
+--D) 
 DELETE 
 FROM POST
 WHERE UPPER(POST.CLASSIFICACAO) = 'ODIO'
