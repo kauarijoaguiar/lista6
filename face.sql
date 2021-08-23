@@ -110,8 +110,6 @@ CREATE TABLE POST(
     PAIS CHAR (100) NOT NULL,
     DATAPOST DATETIME,
     CODPOSTREFERENCIA INTEGER,
-    QTDCOMENTARIOS INTEGER NOT NULL DEFAULT 0,
-    QTDREACOES INTEGER NOT NULL DEFAULT 0,
 CODIGOGRUPO INTEGER,
 CLASSIFICACAO CHAR (100),
     FOREIGN KEY (EMAIL_USUARIO) REFERENCES USUARIO(EMAIL),
@@ -249,8 +247,6 @@ INSERT INTO
         PAIS,
         DATAPOST,
         CODPOSTREFERENCIA,
-        QTDREACOES,
-        QTDCOMENTARIOS,
         CODIGOGRUPO,
         CLASSIFICACAO
     )
@@ -264,8 +260,6 @@ VALUES
         'Brasil',
         '2015-06-02 15:00:00',
         null,
-        1,
-        2,
         null,
         null
     ),
@@ -278,8 +272,6 @@ VALUES
         'Brasil',
         '2021-07-15 15:00:00',
         null,
-        1,
-        2,
         3,
         'odio'
     ),
@@ -293,8 +285,6 @@ VALUES
         '2021-06-02 15:15:00',
         1,
         1,
-        0,
-        1,
         null
     ),
     (
@@ -306,8 +296,6 @@ VALUES
         'Brasil',
         '2021-06-02 15:20:00',
         3,
-        0,
-        0,
         null,
         null
     ),
@@ -320,8 +308,6 @@ VALUES
         'Brasil',
         '2021-06-02 15:30:00',
         4,
-        0,
-        0,
         null,
         null
     ),
@@ -334,8 +320,6 @@ VALUES
         'Brasil',
         '2021-06-08 18:30:00',
         null,
-        0,
-        0,
         2,
         null
     ),
@@ -348,8 +332,6 @@ VALUES
         'Brasil',
         '2021-06-08 20:34:02',
         6,
-        0,
-        0,
         2,
         null
     ),
@@ -362,8 +344,6 @@ VALUES
         'Brasil',
         '2021-06-02 15:00:00',
         null,
-        1,
-        2,
         null,
         null
     ),
@@ -376,8 +356,6 @@ VALUES
         'EUA',
         '2021-06-02 15:00:00',
         null,
-        1,
-        2,
         null, 
         null
     ),
@@ -390,8 +368,6 @@ VALUES
         'EUA',
         '2021-06-02 15:00:00',
         null,
-        1,
-        2,
         null,
         null
     ),
@@ -404,8 +380,6 @@ VALUES
         'Cuba',
         '2021-06-02 15:00:00',
         null,
-        1,
-        2,
         null,
         null
     ),
@@ -418,8 +392,6 @@ VALUES
         'Brasil',
         '2021-06-02 15:00:00',
         10,
-        1,
-        2,
         null,
         null
     ),
@@ -432,9 +404,31 @@ VALUES
         'Brasil',
         '2021-08-05 15:00:00',
         null,
-        0, 
-        0, 
         null,
+        null
+    ),
+    (
+        14,
+        'joaosbras@mymail.com',
+        'Boa tarde galera, vai começar o recesso!',
+        'Rio Grande',
+        'RS',
+        'Brasil',
+        '2021-08-21 15:00:00',
+        null,
+        3,
+        null
+    ), 
+    (
+        15,
+        'joaosbras@mymail.com',
+        'Boa noite faces',
+        'Rio Grande',
+        'RS',
+        'Brasil',
+        '2021-08-19 21:00:00',
+        null,
+        3,
         null
     );
 
@@ -531,8 +525,29 @@ values
     (1, 
     'joaosbras@mymail.com'), 
     (1, 
-    'pxramos@mymail.com');
+    'pxramos@mymail.com'),
+    (3, 'pxramos@mymail.com'),
+    (3, 'joaosbras@mymail.com'),
+    (3,
+    'mcalbuq@mymail.com'),
+    (3, 'pmartinssilva90@mymail.com');
     
+
+INSERT INTO
+    GRUPOUSUARIO(
+        CODIGOGRUPO,
+        EMAIL_USUARIO
+    )
+values
+    (2,
+    'pxramos@mymail.com'),
+    (2,
+    'mcalbuq@mymail.com'),
+    (1, 
+    'joaosbras@mymail.com'), 
+    (1, 
+    'pxramos@mymail.com');
+
 
 INSERT INTO COMPARTILHAMENTO(
     CODIGO,
@@ -630,8 +645,21 @@ AND DATAPOST = (SELECT MAX(DATAPOST) FROM POST, GRUPO WHERE POST.CODIGOGRUPO=GRU
 
 
 --E)
-WITH NROPOSTS AS (SELECT COUNT(*) FROM POST JOIN ) //TO FAZENDO
-
+WITH POSTSSEMANA AS (SELECT POST.CODIGO FROM POST JOIN GRUPO ON POST.CODIGOGRUPO= GRUPO.CODIGO
+WHERE CODIGOGRUPO = (SELECT CODIGO FROM GRUPO WHERE NOMEGRUPO = 'IFRS-Campus Rio Grande')
+AND POST.CODPOSTREFERENCIA IS NULL
+AND POST.DATAPOST BETWEEN DATETIME('NOW', '-7 days') AND DATETIME('NOW', '-1 MINUTE'))
+INSERT INTO SELO (EMAIL_USUARIO,
+    CODIGOGRUPO,
+    DATAINICIO,
+    DATAFINAL,
+    TIPOSELO) VALUES
+    (
+        SELECT * FROM USUARIO  
+    );
+SELECT EMAIL FROM USUARIO JOIN GRUPOUSUARIO ON GRUPOUSUARIO.EMAIL_USUARIO=USUARIO.EMAIL
+JOIN GRUPO ON GRUPOUSUARIO.CODIGOGRUPO = GRUPO.CODIGO
+WHERE GRUPO.NOMEGRUPO='IFRS-Campus Rio Grande'
 
 -- 2) Foi necessário adicionar um status ativo na tabela de usuários para que fosse possível a inativação
 -- temporária de um usuário por ausência de atividades.
