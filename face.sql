@@ -430,6 +430,18 @@ VALUES
         null,
         3,
         null
+    ),
+    (
+        16,
+        'mcalbuq@mymail.com',
+        'Boa noite!!!',
+        'Rio Grande',
+        'RS',
+        'Brasil',
+        '2021-08-19 23:00:00',
+        15,
+        3,
+        null
     );
 
 INSERT INTO
@@ -509,6 +521,26 @@ values
         'Brasil',
         3,
         '2021-06-02 15:50:00'
+    ),
+    (
+        6,
+        'Amei',
+        'mcalbuq@mymail.com',
+        'Rio Grande',
+        'RS',
+        'Brasil',
+        15,
+        '2021-08-20 15:10:00'
+    ),
+    (
+        7,
+        'Amei',
+        'mcalbuq@mymail.com',
+        'Rio Grande',
+        'RS',
+        'Brasil',
+        16,
+        '2021-08-20 15:13:10'
     );
 
 
@@ -653,13 +685,27 @@ INSERT INTO SELO (EMAIL_USUARIO,
     CODIGOGRUPO,
     DATAINICIO,
     DATAFINAL,
-    TIPOSELO) VALUES
-    (
-        SELECT * FROM USUARIO  
-    );
-SELECT EMAIL FROM USUARIO JOIN GRUPOUSUARIO ON GRUPOUSUARIO.EMAIL_USUARIO=USUARIO.EMAIL
-JOIN GRUPO ON GRUPOUSUARIO.CODIGOGRUPO = GRUPO.CODIGO
-WHERE GRUPO.NOMEGRUPO='IFRS-Campus Rio Grande'
+    TIPOSELO)
+        SELECT EMAIL, GRUPO.CODIGO, DATE('NOW') AS DATAINICIAL, DATE('NOW', '+7 DAYS', '-1 MINUTE') AS DATAFINAL, 
+        CASE WHEN(REACOES.NROREACOES >=  (SELECT COUNT(*) FROM POSTSSEMANA) * 0.75
+            AND COMENTARIOS.NROCOMENTARIOS >= (SELECT COUNT(*) FROM POSTSSEMANA) * 0.3) THEN 'Ultra-fã'
+        WHEN(REACOES.NROREACOES >=  (SELECT COUNT(*) FROM POSTSSEMANA) * 0.5
+        AND COMENTARIOS.NROCOMENTARIOS >= (SELECT COUNT(*) FROM POSTSSEMANA) * 0.2) THEN 'Super-fã'
+        WHEN(REACOES.NROREACOES >=  (SELECT COUNT(*) FROM POSTSSEMANA) * 0.25
+        AND COMENTARIOS.NROCOMENTARIOS >= (SELECT COUNT(*) FROM POSTSSEMANA) * 0.1) THEN 'Fã'
+        ELSE '' END AS  TIPOSELO
+        FROM USUARIO JOIN GRUPOUSUARIO ON GRUPOUSUARIO.EMAIL_USUARIO=USUARIO.EMAIL
+        JOIN GRUPO ON GRUPOUSUARIO.CODIGOGRUPO = GRUPO.CODIGO
+        JOIN 
+        (SELECT COUNT(*) AS NROCOMENTARIOS, COMENTARIO.EMAIL_USUARIO FROM POST COMENTARIO 
+        JOIN POST POSTAGEM ON COMENTARIO.CODPOSTREFERENCIA = POSTAGEM.CODIGO
+        WHERE POSTAGEM.CODIGO IN(SELECT CODIGO FROM POSTSSEMANA)) COMENTARIOS ON COMENTARIOS.EMAIL_USUARIO = USUARIO.EMAIL
+        JOIN 
+        (SELECT COUNT(*) AS NROREACOES, REACAO.EMAIL_USUARIO FROM REACAO 
+        JOIN POST ON REACAO.COD_POST = POST.CODIGO
+        WHERE POST.CODIGO IN(SELECT CODIGO FROM POSTSSEMANA)) REACOES ON REACOES.EMAIL_USUARIO = USUARIO.EMAIL
+        WHERE GRUPO.NOMEGRUPO='IFRS-Campus Rio Grande';
+
 
 -- 2) Foi necessário adicionar um status ativo na tabela de usuários para que fosse possível a inativação
 -- temporária de um usuário por ausência de atividades.
